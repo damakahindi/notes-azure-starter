@@ -157,6 +157,33 @@ resource apiDiagnostics 'Microsoft.Insights/diagnosticSettings@2021-05-01-previe
   }
 }
 
+// Optional custom domain: creates a DNS zone you point your registrar's name servers at
+@description('Custom domain, e.g. notes.example.com. Leave empty to skip DNS.')
+param customDomain string = ''
+
+resource dns 'Microsoft.Network/dnsZones@2018-05-01' = if (!empty(customDomain)) {
+  name: customDomain
+  location: 'global'
+}
+
+resource apiRecord 'Microsoft.Network/dnsZones/CNAME@2018-05-01' = if (!empty(customDomain)) {
+  parent: dns
+  name: 'api'
+  properties: {
+    TTL: 3600
+    CNAMERecord: { cname: api.properties.defaultHostName }
+  }
+}
+
+resource wwwRecord 'Microsoft.Network/dnsZones/CNAME@2018-05-01' = if (!empty(customDomain)) {
+  parent: dns
+  name: 'www'
+  properties: {
+    TTL: 3600
+    CNAMERecord: { cname: ui.properties.defaultHostname }
+  }
+}
+
 output apiUrl string = 'https://${api.properties.defaultHostName}'
 output uiUrl string = 'https://${ui.properties.defaultHostname}'
 output cosmosEndpoint string = cosmos.properties.documentEndpoint

@@ -1,3 +1,5 @@
+import { getAccessToken } from "./auth";
+
 export interface Note {
   id: string;
   userId: string;
@@ -10,9 +12,14 @@ export interface Note {
 const baseUrl = import.meta.env.VITE_API_URL ?? "http://localhost:5080";
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  const token = await getAccessToken();
   const response = await fetch(`${baseUrl}${path}`, {
     ...init,
-    headers: { "Content-Type": "application/json", ...init?.headers },
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...init?.headers,
+    },
   });
   if (!response.ok) {
     throw new Error(`${response.status} ${response.statusText}`);

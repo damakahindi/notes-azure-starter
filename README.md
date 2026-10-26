@@ -55,8 +55,12 @@ Build the UI with `VITE_API_URL=<apiUrl output>` and upload it to the Static Web
 
 1. Register an app in Microsoft Entra ID (or another OIDC provider) for the API and one for the SPA.
 2. Set `Auth:Enabled=true` plus the `AzureAd` section (`Instance`, `TenantId`, `ClientId`, `Audience`).
-3. In the UI add `@azure/msal-react`, sign in with PKCE, and send the access token as `Authorization: Bearer`.
+3. The UI already has MSAL sign-in (PKCE). Build it with `VITE_AAD_CLIENT_ID`, `VITE_AAD_TENANT_ID` and `VITE_API_SCOPE` (for example `api://<api-client-id>/access_as_user`); without them it runs anonymously.
 4. The API takes the user id from the `oid`/`sub` claim, which is also the Cosmos partition key.
+
+## Custom domain (DNS)
+
+Set `customDomain` in `infra/main.bicepparam` (for example `notes.example.com`). Bicep creates an Azure DNS zone with `api` and `www` CNAME records; point your registrar's name servers at the zone's name servers, then add the custom hostnames to the web apps.
 
 ## Cost notes
 

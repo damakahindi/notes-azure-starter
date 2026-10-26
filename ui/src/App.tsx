@@ -1,5 +1,20 @@
 import { useEffect, useState } from "react";
+import { useIsAuthenticated } from "@azure/msal-react";
 import { Note, notesApi } from "./api";
+import { authEnabled, loginRequest, msal } from "./auth";
+
+function SignInBar() {
+  const signedIn = useIsAuthenticated();
+  return (
+    <p>
+      {signedIn ? (
+        <button onClick={() => msal!.logoutRedirect()}>Sign out</button>
+      ) : (
+        <button onClick={() => msal!.loginRedirect(loginRequest)}>Sign in</button>
+      )}
+    </p>
+  );
+}
 
 export default function App() {
   const [notes, setNotes] = useState<Note[]>([]);
@@ -35,6 +50,7 @@ export default function App() {
   return (
     <main style={{ maxWidth: 640, margin: "2rem auto", fontFamily: "system-ui" }}>
       <h1>Notes</h1>
+      {authEnabled && <SignInBar />}
       <form onSubmit={add} style={{ display: "grid", gap: 8 }}>
         <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Title" required />
         <textarea value={body} onChange={(e) => setBody(e.target.value)} placeholder="Write a note" rows={3} />
