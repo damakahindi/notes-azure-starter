@@ -20,7 +20,7 @@ A minimal full-stack starter on Azure: **UI + REST API + NoSQL**, hosted the way
 | `tests/Notes.Api.Tests` | xUnit tests |
 | `ui` | React + Vite + TypeScript notes UI |
 | `infra/main.bicep` | Log Analytics, App Insights, Cosmos (serverless), managed identity, App Service plan + API, Static Web App |
-| `.github/workflows` | `ci.yml` (build/test), `deploy.yml` (manual deploy) |
+| `docs/pipelines` | `ci.yml` and `deploy.yml` GitHub Actions; copy to `.github/workflows/` to enable |
 
 ## Hosting pattern
 
